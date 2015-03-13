@@ -1,4 +1,4 @@
-# CM20151_HW4_CamiloAlfonso
-Homework #4 for computational methods class
+## R_referencias
+Estas son las referencias utiles que consulto para esta tarea:
 
-*J. Camilo Alfonso R. 201114819*
+[Introduction to R](http://cran.r-project.org/doc/manuals/R-intro.pdf): PDF de Introduccion a R
