@@ -1,14 +1,11 @@
 
-
-library(gdata)
 library(ggplot2)
 library(reshape2)
 library(plyr)
 library(dplyr)
+library(lubridate)
 
-pkgs <- c('reshape2', 'plyr', 'ggplot2', 'dplyr', 'data.table', 'Lahman')
-
-
+setwd("./")
 #Links
 #Bogota_url <- "http://data.giss.nasa.gov/tmp/gistemp/STATIONS/tmp_305802220000_13_0/station.txt"
 #Cali_url <- "http://data.giss.nasa.gov/tmp/gistemp/STATIONS/tmp_305802590000_13_0/station.txt"
@@ -16,7 +13,7 @@ pkgs <- c('reshape2', 'plyr', 'ggplot2', 'dplyr', 'data.table', 'Lahman')
 #Barranquilla_url <- "http://data.giss.nasa.gov/tmp/gistemp/STATIONS/tmp_305800280000_13_0/station.txt"
 #Ipiales_url <- "http://data.giss.nasa.gov/tmp/gistemp/STATIONS/tmp_305803700000_13_0/station.txt"
 
-#Dado que los links son dinamicos, se decide descargar los archivos 1 sola
+#Dado que los links son dinamicos, se decide descargar los archivos una sola
 #vez y llamarlos directamente desde su ubicacion en en el disco
 #Los archivos existentes son:
 #Bogota.txt
@@ -25,33 +22,40 @@ pkgs <- c('reshape2', 'plyr', 'ggplot2', 'dplyr', 'data.table', 'Lahman')
 #Cali.txt
 #Ipiales.txt
 
-
-#Cargar datos crudos desde el disco
-#Datos de Bogotá
-Bogota <- read.table(
-  file = "Bogota.txt",
-  header = TRUE,
+Ciudades <- c('Bogota', 'Barranquilla', 'Bucaramanga', 'Cali', 'Ipiales')
+a = c() #Serie vacia
+Data = data.frame(a,a,a) # DataFrame vacio. En este data frame se van a guardar los datos tidy
+for(C in Ciudades) { 
+  
+  #Cargar datos
+  Data_raw <- read.table(
+    file = paste(C,".txt",sep=""),
+    header = TRUE)
+  
+  n <- names(Data_raw)[1:13] #Seleccionar los nombres de las columnas a usar
+  Data_raw <- Data_raw[c(n)] #Guardar solo las 13 primeras columnas
+  
+  # Tidy data. Hacer melt para generar datos tidy
+  Data_tidy <- melt(
+    data = Data_raw,
+    id = "YEAR",
+    variable.name = "Month",
+    value.name = "Temperature"
   )
-n <- names(Bogota)[1:13] #Seleccionar los nombres de las columnas a usar
-Bogota <- Bogota[c(n)] #Eliminar las columnas que no se usan
-Bogota_tidy <- melt(
-  data = Bogota,
-  id = "YEAR",
-  variable.name = "Month",
-  value.name = "Temperature"
-  )
-Bogota_tidy$Day = 1
-Bogota_tidy$City = "Bogota"
-Bogota_tidy <- Bogota_tidy[c("YEAR","Month","Day","City","Temperature")]
-#Cali_rdata <- read.table(Cali_url)
-#Bucaramanga_rdata <- read.table(Bucaramanga_url)
-#Barranquilla_rdata <- read.table(Barranquilla_url)
-#Ipiales_rdata <- read.table(Ipiales_url)
+  
+  #Agregar columnas de Ciudad y dia
+  Data_tidy$Day = 1
+  Data_tidy$City = C
+  
+  Data = rbind(Data,Data_tidy) #Agrupar todos los datos en un unico DataFrame
+}
 
+# Ordenar las columnas
+Data <- Data[c("YEAR","Month","Day","City","Temperature")]
+names(Data) <- c('anno','mes','fecha','ciudad','temperatura')
 
-#----
-#Procesar datos
-#Extraer los datos numericos de cada dataframe de datos crudos y organizarlos
-#en un Ãºnico dataframe. Cada fila como esta en los datos crudos va a ser una 
-#observacion en los datos limpios. Agrego variable 'Ciudad' con el nombre de
-#la ciudad que corresponde a cada observacion de los datos.
+#Reemplazar datos de temperatura = 999.9 con NaN
+Data$temperatura[Data$temperatura == 999.9] <- NaN
+# Se cambian los niveles del mes para que no haya problema al usar dmy{lubridate}
+levels(Data$mes) <- c(1,2,3,4,5,6,7,8,9,10,11,12)
+Data$fecha <- dmy(paste(1,Data$mes,Data$anno,sep="-"))
