@@ -10,3 +10,7 @@ Estas son las referencias utiles que consulto para esta tarea:
 [Data Wrangling Examples](https://ramnathv.github.io/pycon2014-r/explore/reshape.html): Excellent examples of data wrangling
 
 [Wrangling basics](https://ramnathv.github.io/pycon2014-r/explore/reshape.html)
+
+[Lubridate-Explanation](http://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html)
+
+[Graphics & facets](http://www.cookbook-r.com/Graphs/Facets_%28ggplot2%29/)
