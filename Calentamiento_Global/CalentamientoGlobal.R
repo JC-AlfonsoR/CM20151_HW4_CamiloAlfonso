@@ -4,6 +4,7 @@ library(reshape2)
 library(plyr)
 library(dplyr)
 library(lubridate)
+library(RColorBrewer)
 
 setwd("./")
 #Links
@@ -59,3 +60,21 @@ Data$temperatura[Data$temperatura == 999.9] <- NaN
 # Se cambian los niveles del mes para que no haya problema al usar dmy{lubridate}
 levels(Data$mes) <- c(1,2,3,4,5,6,7,8,9,10,11,12)
 Data$fecha <- dmy(paste(1,Data$mes,Data$anno,sep="-"))
+
+# Graficar
+#Graficar la serie de tiempo
+w = 1000
+h = 600
+png(filename="Grafica1.png",
+    width = w, height = h)
+gp <- ggplot(Data) + geom_point(aes(x=fecha,y = temperatura, color=ciudad))
+gp <- gp + labs(title="Temperatura en Ciudades de Colombia")
+gp
+dev.off()
+
+png(filename="Grafica2.png",
+    width = w, height = h)
+sp <- ggplot(Data,aes(x=fecha, y=temperatura)) + geom_point(shape=1)
+sp + facet_wrap(~ciudad, scales="free", ncol=2)
+dev.off()
+
