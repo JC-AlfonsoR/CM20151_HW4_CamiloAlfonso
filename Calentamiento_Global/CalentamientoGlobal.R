@@ -78,3 +78,5 @@ sp <- ggplot(Data,aes(x=fecha, y=temperatura)) + geom_point(shape=1)
 sp + facet_wrap(~ciudad, scales="free", ncol=2)
 dev.off()
 
+#Guardar datos en csv
+write.csv(Data, file = "Data.csv")
