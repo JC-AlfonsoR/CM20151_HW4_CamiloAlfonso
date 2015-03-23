@@ -1,0 +1,4 @@
+netCDF-data_links.txt
+https://publicwiki.deltares.nl/display/OET/KML+overview+of+OPeNDAP+data#KMLoverviewofOPeNDAPdata-AccessingnetCDF/OPeNDAPdatawithPython
+http://nbviewer.ipython.org/url/www.hydro.washington.edu/~jhamman/hydro-logic/downloads/notebooks/2013-10-12-plot-netcdf-data.ipynb
+http://matplotlib.org/basemap/users/examples.html
